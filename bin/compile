@@ -131,7 +131,8 @@ if [ $RUST_SKIP_BUILD -ne 1 ]; then
   cargo-web build --bin application --no-default-features --release --target wasm32-unknown-unknown
 
   echo "-----> Copy wasm code"
-  ls -lah $CARGO_TARGET_DIR/
+  X=`ls -lah $CARGO_TARGET_DIR/`
+  echo $X
   find "$CARGO_TARGET_DIR/wasm32-unknown-unknown/release" -maxdepth 1 -type f -name 'application.*' -exec cp -a -t static/js/ {} \;
 
   cargo build --release --bin rustybin --features server
