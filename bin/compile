@@ -124,8 +124,8 @@ if [ $RUST_SKIP_BUILD -ne 1 ]; then
   cd "$BUILD_DIR/$BUILD_PATH"
   rm -rf target/
 
-  echo "-----> Installing cargo-web"
-  cargo --list | grep --silent web || cargo install cargo-web
+  echo "-----> Installing cargo-web ${CARGO_WEB_VERSION}"
+  $(cargo --list | grep --silent web) && [ "cargo-web ${CARGO_WEB_VERSION}" = "$(cargo-web --version)" ] || cargo install cargo-web --force --version ${CARGO_WEB_VERSION}
 
   echo "-----> Building wasm code"
   cargo-web build --bin application --no-default-features --release --target wasm32-unknown-unknown
