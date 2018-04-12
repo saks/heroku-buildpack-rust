@@ -111,6 +111,16 @@ fi
 # which describe how this needs to be named.
 export CARGO_TARGET_DIR="$CACHE_DIR/target"
 
+export CARGO_WEB_URL="https://github.com/koute/cargo-web/releases/download/$CARGO_WEB_VERSION/cargo-web-x86_64-unknown-linux-gnu.gz"
+
+install_cargo_web () {
+  echo "Downloading cargo-web from: $CARGO_WEB_URL"
+  curl -L $CARGO_WEB_URL | gzip -d > cargo-web
+  chmod +x cargo-web
+
+  mv cargo-web ${CARGO_HOME}/bin
+}
+
 if [ $RUST_SKIP_BUILD -ne 1 ]; then
   # Build our project (into CARGO_TARGET_DIR so we have caching) and copy it
   # back to the source tree.  In theory, we could probably just copy the
@@ -125,7 +135,7 @@ if [ $RUST_SKIP_BUILD -ne 1 ]; then
   rm -rf target/
 
   echo "-----> Installing cargo-web ${CARGO_WEB_VERSION}"
-  $(cargo --list | grep --silent web) && [ "cargo-web ${CARGO_WEB_VERSION}" = "$(cargo-web --version)" ] || cargo install cargo-web --force --version ${CARGO_WEB_VERSION}
+  which cargo-web && [ "cargo-web ${CARGO_WEB_VERSION}" = "$(cargo-web --version)" ] || install_cargo_web
 
   echo "-----> Building wasm code"
   cargo-web build --bin application --no-default-features --release --target wasm32-unknown-unknown
